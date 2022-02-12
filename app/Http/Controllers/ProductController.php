@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Cache;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -64,5 +65,25 @@ class ProductController extends Controller
     {
         $product->delete();
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function frontend()
+    {
+        return Cache::remember('products_frontend', 30*60, fn() => Product::paginate());
+    }
+
+    public function backend(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $products = Cache::remember('products_backend', 30*60, fn() => Product::all());
+        $total = $products->count();
+        return [
+            'data'  =>  $products->forPage($page, 9)->values(),
+            'meta'  =>  [
+                'total'     =>  $total,
+                'page'      =>  $page,
+                'last_page' =>  ceil($total/9)
+            ]
+        ];
     }
 }

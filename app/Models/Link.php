@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Link whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Link whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Link whereUserId($value)
+ * @method static \Database\Factories\LinkFactory factory(...$parameters)
  */
 class Link extends Model
 {

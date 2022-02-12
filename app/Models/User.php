@@ -44,6 +44,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Link[] $links
  * @property-read int|null $links_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
+ * @property-read int|null $orders_count
+ * @property-read mixed $revenue
  */
 class User extends Authenticatable
 {
@@ -80,6 +83,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function links()
+    {
+        return $this->hasMany(Link::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function scopeAmbassador($query)
     {
         return $query->where('is_admin', 0);
@@ -90,8 +103,8 @@ class User extends Authenticatable
         return $query->where('is_admin', 1);
     }
 
-    public function links()
+    public function getRevenueAttribute()
     {
-        return $this->hasMany(Link::class);
+        return $this->orders->sum(fn(Order $order) => $order->ambassador_revenue);
     }
 }
