@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LinkController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AmbassadorController;
 
@@ -46,4 +47,16 @@ Route::prefix('ambassador')->group(function(){
 
     Route::get('products/frontend', [ProductController::class, 'frontend']);
     Route::get('products/backend', [ProductController::class, 'backend']);
+
+    Route::middleware(['auth:sanctum', 'scope.ambassador'])->group(function() {
+        Route::post('links', [LinkController::class, 'store']);
+        Route::get('stats', [StatsController::class, 'index']);
+        Route::get('rankings', [StatsController::class, 'rankings']);
+    });
+});
+
+Route::prefix('checkout')->group(function(){
+    Route::get('links/{code}', [LinkController::class, 'show']);
+    Route::get('orders', [OrderController::class, 'store']);
+    Route::get('orders/confirm', [OrderController::class, 'confirm']);
 });
